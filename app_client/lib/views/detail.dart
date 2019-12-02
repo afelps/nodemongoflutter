@@ -22,7 +22,14 @@ class TodoEditState extends State<TodoDetailView> {
 
   TodoEditState(this.todo);
 
-  _delete() async {}
+  _delete() async {
+    final todoId = todo['_id'];
+    final String url = "http://10.0.3.2:3000/api/todo/$todoId";
+    var response = await http.delete(url);
+    if (response.statusCode == 200) {
+      Navigator.pop(context, 'Todo deleted successfuly!');
+    }
+  }
 
   _edit() async {
     final jsonbody = {
@@ -34,7 +41,7 @@ class TodoEditState extends State<TodoDetailView> {
     var response = await http.put(url,
         headers: {"Content-Type": "application/json"}, body: json.encode(jsonbody));
     if (response.statusCode == 200) {
-      Navigator.pop(context, 'Todo created successfuly!');
+      Navigator.pop(context, 'Todo updated successfuly!');
     }
   }
 
@@ -120,7 +127,7 @@ class TodoAddState extends State<TodoDetailView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Editing Todo"),
+        title: Text("Adding Todo"),
       ),
       body: Center(
         child: Container(
