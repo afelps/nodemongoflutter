@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:app_client/models/todo.dart';
 import 'package:app_client/views/detail.dart';
 import 'package:app_client/widgets/todo.dart';
 import 'package:flutter/material.dart';
@@ -15,15 +16,14 @@ class TodoHomeView extends StatefulWidget {
 }
 
 class TodoHomeState extends State<TodoHomeView> {
-  var _isLoading = true;
-  var todos;
+  bool _isLoading = true;
+  List<Todo> todos;
 
   void _fetchTodos() async {
     final response = await http.get("http://10.0.3.2:3000/api/todo/");
-
     if (response.statusCode == 200) {
       setState(() {
-        this.todos = json.decode(response.body).reversed.toList();
+        this.todos = Todo.fromJsonList(json.decode(response.body)).reversed.toList();
         _isLoading = false;
       });
     }
@@ -67,10 +67,9 @@ class TodoHomeState extends State<TodoHomeView> {
               ? CircularProgressIndicator()
               : ListView.builder(
                   key: Key(Random().toString()),
-                  padding: EdgeInsets.all(30),
                   itemCount: this.todos.length,
                   itemBuilder: (context, i) {
-                    return new TodoHome(this.todos[i]);
+                    return TodoHome(this.todos[i]);
                   },
                 ),
         ),

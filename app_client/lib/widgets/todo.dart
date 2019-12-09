@@ -1,8 +1,10 @@
+import 'package:app_client/models/todo.dart';
 import 'package:app_client/views/detail.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class TodoHome extends StatefulWidget {
   final todo;
@@ -12,20 +14,24 @@ class TodoHome extends StatefulWidget {
 }
 
 class TodoHomeState extends State<TodoHome> {
-  final todo;
-
+  Todo todo;
+  DateFormat dateFormat;
   TodoHomeState(this.todo);
 
-  _setCompleted(value) async {
-    final todoId = this.todo['_id'];
+  @override
+  void initState() { 
+    super.initState();
+    dateFormat = DateFormat('yyyy-MM-dd kk:mm:ss');
+  }
+
+  _setCompleted(bool value) async {    
     final String action = value ? "complete" : "uncomplete";
-    final String url = "http://10.0.3.2:3000/api/todo/$todoId/$action";
+    final String url = "http://10.0.3.2:3000/api/todo/${todo.id}/$action";
     final response = await http.put(url);
     if (response.statusCode == 200) {
+      Todo responseTodo = Todo.fromJson(json.decode(response.body));
       setState(() {
-        this.todo['completed'] = value;
-        this.todo['completedAt'] = json.decode(response.body)['completedAt'];
-        print(todo);
+        this.todo = responseTodo;
       });
     }
   }
@@ -44,7 +50,7 @@ class TodoHomeState extends State<TodoHome> {
       alignment: AlignmentDirectional.center,
       margin: EdgeInsets.symmetric(vertical: 5),
       child: Card(
-        elevation: todo['completed'] ? 3 : 10,
+        elevation: todo.completed ? 3 : 10,
         child: _buildListTile(),
       ),
     );
@@ -55,12 +61,12 @@ class TodoHomeState extends State<TodoHome> {
       onTap: () => _navigateToEdit(),
       contentPadding: EdgeInsets.all(8.0),
       title: Text(
-        todo['title'],
+        todo.title,
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, height: 1),
       ),
       subtitle: _buildSubtitle(),
       trailing: Checkbox(
-        value: this.todo['completed'],
+        value: todo.completed,
         onChanged: (value) => _setCompleted(value),
       ),
     );
@@ -72,14 +78,14 @@ class TodoHomeState extends State<TodoHome> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Divider(),
-        Text(todo['description']),
+        Text(todo.description),
         Divider(),
         Text(
-          "created: ${todo['createdAt']}",
+          "created: ${dateFormat.format(todo.createdAt)}",
           style: TextStyle(fontStyle: FontStyle.italic, fontSize: 10),
         ),
         Text(
-          "completed: ${this.todo['completed'] ? todo['completedAt'] : ''}",
+          "completed: ${this.todo.completed ? dateFormat.format(todo.completedAt) : ''}",
           style: TextStyle(fontStyle: FontStyle.italic, fontSize: 10),
         ),
       ],

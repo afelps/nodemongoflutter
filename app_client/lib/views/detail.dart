@@ -1,10 +1,11 @@
+import 'package:app_client/models/todo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class TodoDetailView extends StatefulWidget {
-  final todo;
+  final Todo todo;
   TodoDetailView(this.todo);
   @override
   State<StatefulWidget> createState() {
@@ -16,16 +17,17 @@ class TodoDetailView extends StatefulWidget {
 }
 
 class TodoEditState extends State<TodoDetailView> {
-  final todo;
+  final Todo todo;
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
 
   TodoEditState(this.todo);
 
   _delete() async {
-    final todoId = todo['_id'];
-    final String url = "http://10.0.3.2:3000/api/todo/$todoId";
+    final String url = "http://10.0.3.2:3000/api/todo/${todo.id}";
+    print(url);
     var response = await http.delete(url);
+    print(response.body);
     if (response.statusCode == 200) {
       Navigator.pop(context, 'Todo deleted successfuly!');
     }
@@ -36,8 +38,7 @@ class TodoEditState extends State<TodoDetailView> {
       "title": titleController.text,
       "description": descriptionController.text
     };
-    final todoId = todo['_id'];
-    final String url = "http://10.0.3.2:3000/api/todo/$todoId";
+    final String url = "http://10.0.3.2:3000/api/todo/${todo.id}";
     var response = await http.put(url,
         headers: {"Content-Type": "application/json"}, body: json.encode(jsonbody));
     if (response.statusCode == 200) {
@@ -54,15 +55,15 @@ class TodoEditState extends State<TodoDetailView> {
 
   @override
   Widget build(BuildContext context) {
-    titleController.text = todo['title'];
-    descriptionController.text = todo['description'];
+    titleController.text = todo.title;
+    descriptionController.text = todo.description;
     return Scaffold(
       appBar: AppBar(
         title: Text("Editing Todo"),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.delete),
-            onPressed: () => _delete(),
+            onPressed: _delete,
           )
         ],
       ),
@@ -104,13 +105,10 @@ class TodoAddState extends State<TodoDetailView> {
   TodoAddState();
 
   _create() async {
-    final todo = {
-      "title": titleController.text,
-      "description": descriptionController.text
-    };
+    final Todo todo = Todo(title: titleController.text, description: descriptionController.text);
     final String url = "http://10.0.3.2:3000/api/todo/";
     var response = await http.post(url,
-        headers: {"Content-Type": "application/json"}, body: json.encode(todo));
+        headers: {"Content-Type": "application/json"}, body: json.encode(todo.toJson()));
     if (response.statusCode == 200) {
       Navigator.pop(context, 'Todo created successfuly!');
     }
