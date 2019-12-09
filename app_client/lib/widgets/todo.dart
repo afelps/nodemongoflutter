@@ -13,7 +13,6 @@ class TodoHome extends StatefulWidget {
 
 class TodoHomeState extends State<TodoHome> {
   final todo;
-  final _completedOpacity = 0.2;
 
   TodoHomeState(this.todo);
 
@@ -41,64 +40,49 @@ class TodoHomeState extends State<TodoHome> {
 
   @override
   Widget build(BuildContext context) {
-    final title = todo['title'];
-    final description = todo['description'];
-    final createdAt = todo['createdAt'];
-    final completedAt = todo['completedAt'];
-
     return Container(
       alignment: AlignmentDirectional.center,
       margin: EdgeInsets.symmetric(vertical: 5),
-      decoration: BoxDecoration(
-        border: Border.all(),
-        color: Theme.of(context)
-            .accentColor
-            .withOpacity(this.todo['completed'] ? this._completedOpacity : 0),
+      child: Card(
+        elevation: todo['completed'] ? 3 : 10,
+        child: _buildListTile(),
       ),
-      child: FlatButton(
-        padding: EdgeInsets.all(0),
-        onPressed: () => _navigateToEdit(),
-        child: Row(
-          children: <Widget>[
-            Expanded(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                    child: Text(
-                      title,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 20, height: 1),
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.all(10),
-                    child: Text(description),
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(
-                      "created: $createdAt",
-                      style:
-                          TextStyle(fontStyle: FontStyle.italic, fontSize: 10),
-                    ),
-                  ),
-                  Container(
-                      margin: EdgeInsets.only(left: 10, right: 10, bottom: 5),
-                      child: Text(
-                        "completed: ${this.todo['completed'] ? completedAt : ''}",
-                        style: TextStyle(
-                            fontStyle: FontStyle.italic, fontSize: 10),
-                      ))
-                ])),
-            Checkbox(
-              value: this.todo['completed'],
-              onChanged: (value) => _setCompleted(value),
-            ),
-          ],
+    );
+  }
+
+  ListTile _buildListTile() {
+    var listTile = ListTile(
+      onTap: () => _navigateToEdit(),
+      contentPadding: EdgeInsets.all(8.0),
+      title: Text(
+        todo['title'],
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, height: 1),
+      ),
+      subtitle: _buildSubtitle(),
+      trailing: Checkbox(
+        value: this.todo['completed'],
+        onChanged: (value) => _setCompleted(value),
+      ),
+    );
+    return listTile;
+  }
+
+  Column _buildSubtitle() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Divider(),
+        Text(todo['description']),
+        Divider(),
+        Text(
+          "created: ${todo['createdAt']}",
+          style: TextStyle(fontStyle: FontStyle.italic, fontSize: 10),
         ),
-      ),
+        Text(
+          "completed: ${this.todo['completed'] ? todo['completedAt'] : ''}",
+          style: TextStyle(fontStyle: FontStyle.italic, fontSize: 10),
+        ),
+      ],
     );
   }
 }
