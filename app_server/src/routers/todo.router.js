@@ -45,8 +45,8 @@ router.put("/:todoId", async (req, res, next) => {
   try {
     const todoId = req.params.todoId;
     const todo = req.body;
-    await todoService.update(todoId, todo);
-    res.json(todo);
+    const updatedTodo = await todoService.update(todoId, todo);
+    res.json(updatedTodo);
   } catch (err) {
     next(err);
   }
