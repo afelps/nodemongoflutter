@@ -2,12 +2,12 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
 class Todo extends Equatable {
-  String id;
-  String title;
-  String description;
-  bool completed;
-  DateTime completedAt;
-  DateTime createdAt;
+  final String id;
+  final String title;
+  final String description;
+  final bool completed;
+  final DateTime completedAt;
+  final DateTime createdAt;
 
   Todo(
       {this.id,
@@ -31,7 +31,7 @@ class Todo extends Equatable {
             : DateTime.parse(json['createdAt'] as String));
   }
 
-  static List<Todo> fromJsonList(List<dynamic> jsonList){
+  static List<Todo> fromJsonList(List<dynamic> jsonList) {
     return jsonList.map((json) => Todo.fromJson(json)).toList();
   }
 
