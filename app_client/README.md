@@ -25,10 +25,11 @@ Ok, so, the functionalities, sure. They are the standard *create delete edit* wi
 
 ## Problems
 
-Well, I'm going to start with the main one: Even tough the app is functional there is this problem I couldn't figure out on time, and that is the new/old todo refresh. If you add a `TODO` and then hit `Refresh` for a moment the `TODO` list will grow (since it got the new stuff from the API), but won't actually set the values of the new `TODO` it will just repeat the first one. I did some debugging and found out that the widget that gets the list from the API *does* update the list up until it passes down to the widget that actually builds the `TODOs` itselves. Well, I read that the `setState()` function triggers the `build()` function for the Widget it's called in and its childs but clearly I must be doing something wrong here.
+I started out with a lot of `setState` problems, the code was unorganized and had some refresh issues so that sometimes the Todo list wasn't updated correctly. I got rid of these problems by implementing the **bloc pattern** on the project. It was kind of a challenge but it worked out in the end.
 
-I didn't build a service layer so that might be part of the problem.
+Some problems persist tough:
+- I didn't develop any tests
+- Edit and Add form have duplicated code
+- Edit and Add form don't have any kind of field validation
 
-Well that's that. Other than that I can only say that I didn't follow any naming or structure conventions and some Widgets might have ended up with the Flutter equivalent of `callback hell`. It's really a shame, I couldn't finish it on time and ended up with an unfinished product that just happends to have some functionality to it.
-
-There is a test class. I didn't touch it besides commenting it all out. I'd like to test it all but I barely (arguably) got the app running.
+I think that's it for now. Didn't find that many problems this time but I plan on keep working on them.
